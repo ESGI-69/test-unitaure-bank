@@ -1,15 +1,18 @@
-import db from './models/index';
+import { PrismaClient } from '@prisma/client';
 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and Resync with { force: true }');
-});
+const prisma = new PrismaClient()
 
-try {
-  await db.sequelize.authenticate();
-  console.log('Connection has been established successfully.');
-  return db.sequelize;
-} catch (error) {
-  console.error('Unable to connect to the database:', error);
-  throw error;
+async function main() {
+  const allUsers = await prisma.user.findMany()
+  console.log(allUsers)
 }
 
+main()
+  .then(async () => {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })
