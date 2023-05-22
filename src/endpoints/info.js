@@ -9,8 +9,6 @@ const prisma = new PrismaClient();
  */
 export default async (req, res) => {
   const id = req.params.id;
-  console.log('id', id);
-  console.log(typeof id);
   if (!id) {
     return res.status(400).json({
       error: 'Missing user id',
@@ -22,8 +20,16 @@ export default async (req, res) => {
       where: {
         id,
       },
+      include: {
+        accounts: true,
+      },
     });
-    res.status(200).json(user);
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+      });
+    }
+    res.status(200).json(user.accounts);
   } catch (error) {
     res.status(500).json({
       error: error.message,
