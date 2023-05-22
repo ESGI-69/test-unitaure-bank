@@ -1,18 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import express from 'express';
+
+import info from './endpoints/info.js';
 
 const prisma = new PrismaClient()
 
-async function main() {
-  const allUsers = await prisma.user.findMany()
-  console.log(allUsers)
-}
+const app = express();
 
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+app.get('/users/:id/accounts', info);
+
+app.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
